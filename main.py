@@ -1,4 +1,4 @@
-from flask import Flask, abort
+from flask import Flask, abort, make_response
 from flask_restful import Api, Resource, reqparse, inputs, fields, marshal_with, marshal
 from flask_sqlalchemy import SQLAlchemy
 import sys
@@ -99,7 +99,25 @@ class EventByID(Resource):
             return {"message": "The event has been deleted!"}
 
 
+class MainPage(Resource):
+    # @marshal_with(mfields)
+    def get(self):
+        response = make_response('''
+Welcome to the CalendarAPI!
+
+There are all the function that are currently supported:
+[GET /event] - get all events
+[GET /event?start_time=<YYYY-MM-DD>&end_time=<YYYY-MM-DD>] - show all events in period (start_time, end_time]
+[POST /event?event=<string>&date=<YYYY-MM-DD>] - add new event
+[GET /event/today] - get all events for today
+[GET /event/<int:event_id>] - get event with id = <event_id></a>''', 200)
+        response.mimetype = "text/plain"
+        return response
+
+
+
 # where is everything located
+api.add_resource(MainPage, '/')
 api.add_resource(Events, '/event')
 api.add_resource(Today, '/event/today')
 api.add_resource(EventByID, '/event/<int:event_id>')

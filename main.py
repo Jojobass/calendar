@@ -8,7 +8,7 @@ app = Flask(__name__)
 api = Api(app)
 db = SQLAlchemy(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///name.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///calendar.db'
 
 
 # Event and all it's params for the db

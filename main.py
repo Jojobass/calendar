@@ -6,9 +6,11 @@ import datetime
 
 app = Flask(__name__)
 api = Api(app)
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///calendar.db'
+
+db.init_app(app)
 
 
 # Event and all it's params for the db
@@ -18,21 +20,24 @@ class Event(db.Model):
     event = db.Column(db.String(80), nullable=False)
     date = db.Column(db.Date, nullable=False)
 
+with app.app_context():
+    db.create_all()
 
-db.create_all()
 # arguments for POST in Events
 parser_events_post = reqparse.RequestParser()
 parser_events_post.add_argument(
     "date",
     type=inputs.date,
     help="The event date with the correct format is required! The correct format is YYYY-MM-DD!",
-    required=True
+    required=True,
+    location='args'
 )
 parser_events_post.add_argument(
     "event",
     type=str,
     help="The event name is required!",
-    required=True
+    required=True,
+    location='args'
 )
 # arguments for GET in Events
 parser_events_get = reqparse.RequestParser()
@@ -40,13 +45,15 @@ parser_events_get.add_argument(
     "start_time",
     type=inputs.date,
     help="The event date with the correct format is required! The correct format is YYYY-MM-DD!",
-    required=False
+    required=False,
+    location='args'
 )
 parser_events_get.add_argument(
     "end_time",
     type=inputs.date,
     help="The event date with the correct format is required! The correct format is YYYY-MM-DD!",
-    required=False
+    required=False,
+    location='args'
 )
 
 # fields in the response
@@ -132,3 +139,4 @@ if __name__ == '__main__':
         app.run(host=arg_host, port=arg_port)
     else:
         app.run(debug=True)
+    # app.run(debug=True)
